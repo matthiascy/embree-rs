@@ -93,11 +93,11 @@ pub struct SoARayRefMut<'a, T> {
 }
 
 impl<'a, T: SoARay + 'a> SoARayRefMut<'a, T> {
-    pub fn origin(&self) -> [f32; 3] {
+    pub fn org(&self) -> [f32; 3] {
         let ray = unsafe { self.ray.as_ref().expect("should never be null!") };
         ray.org(self.idx)
     }
-    pub fn set_origin(&mut self, o: [f32; 3]) {
+    pub fn set_org(&mut self, o: [f32; 3]) {
         let ray = unsafe { self.ray.as_mut().expect("should never be null!") };
         ray.set_org(self.idx, o);
     }

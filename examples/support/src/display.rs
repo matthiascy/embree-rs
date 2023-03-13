@@ -777,7 +777,7 @@ fn render_frame_eye_light<T: Sized + Send + Sync>(
         for (i, mut ray) in ray_hits.ray.iter_mut().enumerate() {
             let x = tile.x + (i % tile.w as usize) as u32;
             let y = tile.y + (i / tile.w as usize) as u32;
-            ray.set_origin(camera.pos.into());
+            ray.set_org(camera.pos.into());
             ray.set_dir(camera.ray_dir((x as f32 + 0.5, y as f32 + 0.5)).into());
             ray.set_tnear(0.0);
             ray.set_tfar(f32::INFINITY);
@@ -813,7 +813,7 @@ fn render_frame_pixel_uv<T: Sized + Send + Sync>(
         for (i, mut ray) in ray_hits.ray.iter_mut().enumerate() {
             let x = tile.x + (i % tile.w as usize) as u32;
             let y = tile.y + (i / tile.w as usize) as u32;
-            ray.set_origin(camera.pos.into());
+            ray.set_org(camera.pos.into());
             ray.set_dir(camera.ray_dir((x as f32 + 0.5, y as f32 + 0.5)).into());
             ray.set_tnear(0.0);
             ray.set_tfar(f32::INFINITY);
@@ -850,7 +850,7 @@ fn render_frame_pixel_normal<T: Sized + Send + Sync>(
         for (i, mut ray) in ray_hits.ray.iter_mut().enumerate() {
             let x = tile.x + (i % tile.w as usize) as u32;
             let y = tile.y + (i / tile.w as usize) as u32;
-            ray.set_origin(camera.pos.into());
+            ray.set_org(camera.pos.into());
             ray.set_dir(camera.ray_dir((x as f32 + 0.5, y as f32 + 0.5)).into());
             ray.set_tnear(0.0);
             ray.set_tfar(f32::INFINITY);
@@ -887,7 +887,7 @@ fn render_frame_pixel_geometry_id<T: Sized + Send + Sync>(
         for (i, mut ray) in ray_hits.ray.iter_mut().enumerate() {
             let x = tile.x + (i % tile.w as usize) as u32;
             let y = tile.y + (i / tile.w as usize) as u32;
-            ray.set_origin(camera.pos.into());
+            ray.set_org(camera.pos.into());
             ray.set_dir(camera.ray_dir((x as f32 + 0.5, y as f32 + 0.5)).into());
             ray.set_tnear(0.0);
             ray.set_tfar(f32::INFINITY);
@@ -970,7 +970,7 @@ fn render_frame_pixel_geometry_primitive_id<T: Sized + Send + Sync>(
         for (i, mut ray) in ray_hits.ray.iter_mut().enumerate() {
             let x = tile.x + (i % tile.w as usize) as u32;
             let y = tile.y + (i / tile.w as usize) as u32;
-            ray.set_origin(camera.pos.into());
+            ray.set_org(camera.pos.into());
             ray.set_dir(camera.ray_dir((x as f32 + 0.5, y as f32 + 0.5)).into());
             ray.set_tnear(0.0);
             ray.set_tfar(f32::INFINITY);

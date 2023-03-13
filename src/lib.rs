@@ -128,7 +128,7 @@ impl PartialEq<ValidMask> for i32 {
 ///   ```text
 ///   | scale_x  skew_xy  skew_xz  shift_x |
 ///   |   0      scale_y  skew_yz  shift_y |
-///   |   0         0     scale_z  shitf_z |
+///   |   0         0     scale_z  shift_z |
 ///   |   0         0        0         1   |
 ///   ```
 ///

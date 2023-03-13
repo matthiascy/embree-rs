@@ -59,7 +59,7 @@ fn main() {
                 for (i, mut ray) in rays.iter_mut().enumerate() {
                     let x = (i as f32 + 0.5) / img_dims.0 as f32 - 0.5;
                     let dir_len = f32::sqrt(x * x + y * y + 1.0);
-                    ray.set_origin([0.0, 0.5, 2.0]);
+                    ray.set_org([0.0, 0.5, 2.0]);
                     ray.set_dir([x / dir_len, y / dir_len, -1.0 / dir_len]);
                 }
 
