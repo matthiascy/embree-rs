@@ -770,6 +770,7 @@ fn render_frame_eye_light<T: Sized + Send + Sync>(
     camera: &Camera,
     state: &DebugState<T>,
 ) {
+    frame.reinterpret_as_tiled();
     frame.par_tiles_mut().for_each(|tile| {
         let tile_size = (tile.w * tile.h) as usize;
         let mut ray_hits = RayHitNp::new(RayNp::new(tile_size));
@@ -805,6 +806,7 @@ fn render_frame_pixel_uv<T: Sized + Send + Sync>(
     camera: &Camera,
     state: &DebugState<T>,
 ) {
+    frame.reinterpret_as_tiled();
     frame.par_tiles_mut().for_each(|tile| {
         let tile_size = (tile.w * tile.h) as usize;
         let mut ray_hits = RayHitNp::new(RayNp::new(tile_size));
@@ -841,6 +843,7 @@ fn render_frame_pixel_normal<T: Sized + Send + Sync>(
     camera: &Camera,
     state: &DebugState<T>,
 ) {
+    frame.reinterpret_as_tiled();
     frame.par_tiles_mut().for_each(|tile| {
         let tile_size = (tile.w * tile.h) as usize;
         let mut ray_hits = RayHitNp::new(RayNp::new(tile_size));
@@ -877,6 +880,7 @@ fn render_frame_pixel_geometry_id<T: Sized + Send + Sync>(
     camera: &Camera,
     state: &DebugState<T>,
 ) {
+    frame.reinterpret_as_tiled();
     frame.par_tiles_mut().for_each(|tile| {
         let tile_size = (tile.w * tile.h) as usize;
         let mut ray_hits = RayHitNp::new(RayNp::new(tile_size));
@@ -926,6 +930,7 @@ fn render_frame_pixel_cpu_cycles<T: Sized + Send + Sync>(
     camera: &Camera,
     state: &DebugState<T>,
 ) {
+    frame.reinterpret_as_tiled();
     frame.par_tiles_mut().for_each(|tile| {
         for (i, pixel) in tile.pixels.iter_mut().enumerate() {
             let x = tile.x + (i % tile.w as usize) as u32;
@@ -958,6 +963,7 @@ fn render_frame_pixel_geometry_primitive_id<T: Sized + Send + Sync>(
     camera: &Camera,
     state: &DebugState<T>,
 ) {
+    frame.reinterpret_as_tiled();
     frame.par_tiles_mut().for_each(|tile| {
         let tile_size = (tile.w * tile.h) as usize;
         let mut ray_hits = RayHitNp::new(RayNp::new(tile_size));

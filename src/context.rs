@@ -1,4 +1,4 @@
-use crate::sys::*;
+use crate::{sys::*, Geometry};
 
 /// Trait for extended intersection context enabling passing of additional
 /// ray-query specific data.
@@ -33,14 +33,23 @@ pub unsafe trait AsIntersectContext {
 /// function, and specify the chain of IDs of the current instance, and to
 /// attach arbitrary user data to the query (e.g. per ray data).
 ///
-/// # Filter Callback
+/// # Context Filter Callback
 ///
 /// A filter function can be specified inside the context. This function is
-/// invoked as a second filter stage after the per-geometry intersect or
-/// occluded filter function is invoked. Only rays that passed the first filter
-/// stage are valid in this second filter stage. Having such a per ray-query
-/// filter function can be useful to implement modifications of the behavior of
-/// the query, such as collecting all hits or accumulating transparencies.
+/// invoked as a second filter stage after the per-geometry intersect
+/// [`Geometry::set_intersect_filter_function`] or occluded filter
+/// [`Geometry::set_occluded_filter_function`] function is invoked. Only rays
+/// that passed the first filter stage are valid in this second filter stage.
+/// Having such a per ray-query filter function can be useful to implement
+/// modifications of the behavior of the query, such as collecting all hits or
+/// accumulating transparencies.
+///
+/// It is guaranteed that the intersection context passed to a ray query is
+/// directly passed to the registered callback function. This means that it's
+/// possible to attach arbitrary user data to the context and access it from the
+/// callback (see [`IntersectContextExt`]). On the contrary, the ray is not
+/// guaranteed to be passed to the callback functions, thus reading additional
+/// data from the ray passed to the callback is not possible.
 ///
 /// ## Note
 ///

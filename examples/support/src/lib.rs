@@ -1,6 +1,7 @@
 pub mod camera;
 mod common;
 pub mod display;
+pub mod scene_graph;
 
 pub use common::*;
 
