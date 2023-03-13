@@ -453,7 +453,7 @@ impl<'a> Scene<'a> {
     ///   intersection context is propagated to callback functions invoked
     ///   during traversal and can thus be used to extend the ray with
     ///   additional data. See [`IntersectContext`] for more information.
-    /// * `ray` - The ray to intersect with the scene.
+    /// * `ray` - The ray [`RayHit`] to intersect with the scene.
     pub fn intersect<C: AsIntersectContext>(&self, ctx: &mut C, ray: &mut RayHit) {
         unsafe {
             rtcIntersect1(

@@ -15,7 +15,7 @@ extern crate core;
 
 use std::{
     alloc, mem,
-    ops::{Deref, DerefMut},
+    ops::{Deref, DerefMut, Not},
 };
 
 mod buffer;
@@ -86,10 +86,36 @@ pub type GeometryKind = sys::RTCGeometryType;
 
 /// Validity mask value for rays or hits in the filter functions.
 /// See [`ValidityN`].
-#[repr(C, i32)]
+#[repr(i32)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ValidMask {
     Valid = -1,
     Invalid = 0,
+}
+
+impl Not for ValidMask {
+    type Output = ValidMask;
+
+    fn not(self) -> Self::Output {
+        match self {
+            ValidMask::Valid => ValidMask::Invalid,
+            ValidMask::Invalid => ValidMask::Valid,
+        }
+    }
+}
+
+impl Not for &ValidMask {
+    type Output = <ValidMask as Not>::Output;
+
+    fn not(self) -> Self::Output { <ValidMask as Not>::not(*self) }
+}
+
+impl PartialEq<i32> for ValidMask {
+    fn eq(&self, other: &i32) -> bool { *other == *self as i32 }
+}
+
+impl PartialEq<ValidMask> for i32 {
+    fn eq(&self, other: &ValidMask) -> bool { *self == *other as i32 }
 }
 
 /// Structure that represents a quaternion decomposition of an affine
