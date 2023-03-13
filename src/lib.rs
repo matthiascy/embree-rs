@@ -84,10 +84,13 @@ pub type SubdivisionMode = sys::RTCSubdivisionMode;
 /// The type of a geometry, used to determine which geometry type to create.
 pub type GeometryKind = sys::RTCGeometryType;
 
-/// Validity mask for rays and hits in the filter functions.
-pub const VALID_MASK: i32 = -1;
-/// Invalidity mask for rays and hits in the filter functions.
-pub const INVALID_MASK: i32 = 0;
+/// Validity mask value for rays or hits in the filter functions.
+/// See [`ValidityN`].
+#[repr(C, i32)]
+pub enum ValidMask {
+    Valid = -1,
+    Invalid = 0,
+}
 
 /// Structure that represents a quaternion decomposition of an affine
 /// transformation.
