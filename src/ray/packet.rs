@@ -586,4 +586,10 @@ impl<'a> RayHitN<'a> {
             marker: PhantomData,
         }
     }
+
+    /// Returns the number of ray/hit pairs in the packet.
+    pub fn len(&self) -> usize { self.len }
+
+    /// Returns true if the packet is empty.
+    pub fn is_empty(&self) -> bool { self.len == 0 }
 }

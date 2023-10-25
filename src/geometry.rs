@@ -967,6 +967,24 @@ impl<'buf> Geometry<'buf> {
         }
     }
 
+    /// Sets the number of primitives of a user-defined geometry.
+    pub fn set_user_primitive_count(&mut self, count: u32) {
+        match self.kind {
+            GeometryKind::USER => {
+                // Update the primitive count.
+                unsafe {
+                    rtcSetGeometryUserPrimitiveCount(self.handle, count);
+                }
+            }
+            _ => {
+                eprint!(
+                    "User primitive count not allowed for geometries of type {:?}!",
+                    self.kind
+                );
+            }
+        }
+    }
+
     /// Sets the number of vertex attributes of the geometry.
     ///
     /// This function sets the number of slots for vertex attributes buffers
@@ -2054,6 +2072,21 @@ where
     Some(inner::<F, D>)
 }
 
+pub struct IntersectFunctionNArgs<'a, C: AsIntersectContext, D: UserGeometryData> {
+    pub ray_hit_n: RayHitN<'a>,
+    pub valid_n: ValidityN<'a>,
+    pub context: &'a mut C,
+    pub geom_id: u32,
+    pub prim_id: u32,
+    pub user_data: Option<&'a mut D>,
+    raw_geom_user_ptr: *mut std::os::raw::c_void,
+}
+
+impl<'a, C: AsIntersectContext, D: UserGeometryData> IntersectFunctionNArgs<'a, C, D> {
+    /// Returns the number of rays in the ray packet.
+    pub fn len(&self) -> usize { self.ray_hit_n.len() }
+}
+
 /// Helper function to convert a Rust closure to `RTCIntersectFunctionN`
 /// callback.
 fn intersect_function<F, D, C>(_f: &mut F) -> RTCIntersectFunctionN
@@ -2401,3 +2434,61 @@ impl<'a, 'b> Iterator for ValidityNIterMut<'a, 'b> {
         }
     }
 }
+
+// pub struct FilterFnNArgs<'a, C: AsIntersectContext, D: UserGeometryData> {
+//     pub ray_n: RayN<'a>,
+//     pub hit_n: HitN<'a>,
+//     pub valid_n: ValidityN<'a>,
+//     pub context: &'a mut C,
+//     pub user_data: Option<&'a mut D>,
+//     pub count: usize,
+// }
+//
+// pub struct OccludedFnNArgs<'a, C: AsIntersectContext, D: UserGeometryData> {
+//     pub ray_n: RayN<'a>,
+//     pub valid_n: ValidityN<'a>,
+//     pub context: &'a mut C,
+//     pub geom_id: u32,
+//     pub prim_id: u32,
+//     pub user_data: Option<&'a mut D>,
+//     pub count: usize,
+// }
+//
+// /// Invokes the intersection filter function.
+// ///
+// /// This function can be used inside the intersection filter function
+// callback /// ([`Geometry::set_intersect_filter_function`]) to invoke the
+// intersection /// filter function registered to the geometry and stored inside
+// the context. pub fn invoke_intersect_filter<'a, C: AsIntersectContext, D:
+// UserGeometryData>(     isect_args: &IntersectFunctionNArgs<'a, C, D>,
+//     filter_args: &FilterFnNArgs<'a, C, D>,
+// ) {
+//     let intersect_arguments = RTCIntersectFunctionNArguments {
+//         valid: isect_args.valid_n.ptr as *mut i32,
+//         geometryUserPtr: (),
+//         primID: isect_args.prim_id as u32,
+//         context: isect_args.context.as_mut_context_ptr(),
+//         rayhit: isect_args.ray_hit_n.ptr,
+//         N: isect_args.count as u32,
+//         geomID: isect_args.geom_id,
+//     };
+//     let filter_arguments = RTCFilterFunctionNArguments {
+//         valid: filter_args.valid_n.ptr as *mut i32,
+//         geometryUserPtr: (),
+//         context: filter_args.context.as_mut_context_ptr(),
+//         ray: filter_args.ray_n.ptr,
+//         hit: filter_args.hit_n.ptr,
+//         N: ,
+//     };
+//     unsafe { rtcFilterIntersection(&intersect_arguments as *const
+// RTCIntersectFunctionNArguments) } }
+//
+// /// Invokes the occlusion filter function.
+// ///
+// /// This function can be used inside the occlusion filter function callback
+// /// ([`Geometry::set_occluded_filter_function`]) to invoke the occlusion
+// filter. pub fn invoke_occluded_filter<'a, C: AsIntersectContext, D:
+// UserGeometryData>(     occluded_args: &OccludedFnNArgs<'a, C, D>,
+//     filter_args: &FilterFnNArgs<'a, C, D>,
+// ) {
+// }
