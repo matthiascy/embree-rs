@@ -40,6 +40,8 @@ pub(crate) struct GeometryUserData {
     pub data: *mut std::os::raw::c_void,
     /// Type ID of the user-defined data.
     pub type_id: TypeId,
+    /// Whether the user-defined data is owned by the geometry.
+    pub owned: bool,
 }
 
 /// Payloads for user-defined callbacks of a geometry of kind
@@ -181,6 +183,20 @@ impl<'buf> Clone for Geometry<'buf> {
 
 impl<'buf> Drop for Geometry<'buf> {
     fn drop(&mut self) {
+        let mut geom_data = self.data.lock().unwrap();
+        let user_data = geom_data.user_data.take();
+        match user_data {
+            None => {
+                // Do nothing.
+            }
+            Some(data) => {
+                if data.owned {
+                    unsafe {
+                        let _ = Box::from_raw(data.data);
+                    }
+                }
+            }
+        }
         unsafe {
             rtcReleaseGeometry(self.handle);
         }
@@ -926,7 +942,7 @@ impl<'buf> Geometry<'buf> {
     ///
     /// The application can use this pointer inside the callback functions to
     /// access its geometry representation.
-    pub fn set_user_data<D>(&mut self, user_data: &mut D)
+    pub fn set_user_data<'a: 'buf, D>(&'buf mut self, user_data: &'a mut D)
     where
         D: UserGeometryData,
     {
@@ -934,6 +950,44 @@ impl<'buf> Geometry<'buf> {
         geom_data.user_data = Some(GeometryUserData {
             data: user_data as *mut D as *mut std::os::raw::c_void,
             type_id: TypeId::of::<D>(),
+            owned: false,
+        });
+        unsafe {
+            rtcSetGeometryUserData(
+                self.handle,
+                geom_data.deref_mut() as *mut GeometryData as *mut _,
+            );
+        }
+    }
+
+    pub fn set_owned_user_data<D>(&mut self, user_data: D)
+    where
+        D: UserGeometryData,
+    {
+        let mut geom_data = self.data.lock().unwrap();
+        let data = geom_data.user_data.take();
+
+        // Drop the old user data if it is owned.
+        if let Some(GeometryUserData {
+            mut data,
+            mut owned,
+            ..
+        }) = data
+        {
+            if owned {
+                unsafe {
+                    let _ = Box::from_raw(data as _);
+                }
+                data = ptr::null_mut();
+                owned = false;
+            }
+        }
+
+        let ptr = Box::leak(Box::new(user_data));
+        geom_data.user_data = Some(GeometryUserData {
+            data: ptr as *mut D as *mut std::os::raw::c_void,
+            type_id: TypeId::of::<D>(),
+            owned: true,
         });
         unsafe {
             rtcSetGeometryUserData(

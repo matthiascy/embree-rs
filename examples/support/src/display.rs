@@ -1,4 +1,3 @@
-use core::num::NonZeroU32;
 use std::{arch::x86_64::_rdtsc, borrow::Cow, fmt::Debug};
 
 use crate::{rgba_to_u32, Camera, DebugState, ShadingMode, TiledImage, TILE_SIZE_X, TILE_SIZE_Y};
@@ -21,9 +20,9 @@ use winit::{
 };
 
 const WGSL_SHADERS: &str = "
-type float2 = vec2<f32>;
-type float4 = vec4<f32>;
-type int2 = vec2<i32>;
+alias float2 = vec2<f32>;
+alias float4 = vec4<f32>;
+alias int2 = vec2<i32>;
 
 struct VertexInput {
     @builtin(vertex_index) index: u32,
@@ -580,8 +579,8 @@ pub fn run<F, G, U, T>(
                     &image_buf,
                     wgpu::ImageDataLayout {
                         offset: 0,
-                        bytes_per_row: Some(NonZeroU32::new(window_size.width * 4).unwrap()),
-                        rows_per_image: Some(NonZeroU32::new(window_size.height).unwrap()),
+                        bytes_per_row: Some(window_size.width * 4),
+                        rows_per_image: Some(window_size.height),
                     },
                     window_extent,
                 );
